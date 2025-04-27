@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface VideoPlayerProps {
   videoId: string | null;
@@ -10,12 +10,9 @@ const VideoPlayer = ({ videoId }: VideoPlayerProps) => {
   if (!videoId) return null;
 
   return (
-    <Card className="shadow-lg">
-      <CardHeader>
-        <CardTitle>Now Playing</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="aspect-video">
+    <Card className="neo-blur border-white/10 shadow-xl">
+      <CardContent className="p-4">
+        <div className="aspect-video rounded-lg overflow-hidden">
           <iframe 
             width="100%" 
             height="100%" 

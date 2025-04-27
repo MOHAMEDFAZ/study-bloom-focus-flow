@@ -7,34 +7,34 @@
 
 @layer base {
   :root {
-    --background: 240 29% 19%;
+    --background: 222 47% 11%;
     --foreground: 210 40% 98%;
-
+    
     --card: 222 47% 11%;
     --card-foreground: 210 40% 98%;
-
+    
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
-
+    
     --primary: 262 81% 75%;
     --primary-foreground: 222 47% 11%;
-
+    
     --secondary: 217 33% 18%;
     --secondary-foreground: 210 40% 98%;
-
+    
     --muted: 217 33% 18%;
     --muted-foreground: 215 20% 65%;
-
+    
     --accent: 217 33% 18%;
     --accent-foreground: 210 40% 98%;
-
+    
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
-
+    
     --border: 215 27% 24%;
     --input: 217 33% 18%;
     --ring: 262 81% 75%;
-
+    
     --radius: 0.75rem;
   }
 }
@@ -59,7 +59,7 @@ html {
     @apply bg-black/30 backdrop-blur-md border border-white/10 rounded-xl;
   }
   .neo-blur {
-    @apply backdrop-blur-2xl bg-black/40 border border-white/10;
+    @apply backdrop-blur-2xl bg-black/40 border border-white/10 shadow-xl;
   }
   .text-gradient {
     @apply bg-gradient-to-br from-white via-white/90 to-white/70 bg-clip-text text-transparent;
