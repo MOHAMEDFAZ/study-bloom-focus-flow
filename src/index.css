@@ -6,6 +6,7 @@
 @tailwind utilities;
 
 @layer base {
+  /* Root variables for theming */
   :root {
     --background: 222 47% 11%;
     --foreground: 210 40% 98%;
@@ -44,23 +45,33 @@
   color-scheme: dark;
 }
 
-html {
-  @apply dark;
-}
-
+/* Apply dark class to HTML. This must be within a layer directive for Tailwind */
 @layer base {
+  html {
+    @apply dark;
+  }
+  
+  /* Basic styling for all elements */
   * {
     @apply border-border;
   }
+  
+  /* Body styling */
   body {
     @apply bg-background text-foreground font-sans transition-colors duration-300;
   }
+  
+  /* Glass effect utility class */
   .glass {
     @apply bg-black/30 backdrop-blur-md border border-white/10 rounded-xl;
   }
+  
+  /* Neo-blur effect utility class */
   .neo-blur {
     @apply backdrop-blur-2xl bg-black/40 border border-white/10 shadow-xl;
   }
+  
+  /* Text gradient effect utility class */
   .text-gradient {
     @apply bg-gradient-to-br from-white via-white/90 to-white/70 bg-clip-text text-transparent;
   }
