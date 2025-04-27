@@ -69,12 +69,21 @@
   }
 }
 
+/* Set dark mode as default */
+:root {
+  color-scheme: dark;
+}
+
+html {
+  @apply dark;
+}
+
 @layer base {
   * {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans transition-colors duration-300;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading font-semibold;
@@ -90,6 +99,20 @@
   }
   .btn-primary {
     @apply bg-studynest-purple hover:bg-studynest-purple-secondary text-white px-6 py-2.5 rounded-lg transition-all duration-300 ease-in-out font-medium shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-studynest-purple focus:ring-opacity-50;
+  }
+  
+  /* Add page transition animations */
+  .page-transition-enter {
+    @apply opacity-0;
+  }
+  .page-transition-enter-active {
+    @apply opacity-100 transition-opacity duration-300;
+  }
+  .page-transition-exit {
+    @apply opacity-100;
+  }
+  .page-transition-exit-active {
+    @apply opacity-0 transition-opacity duration-300;
   }
 }
 

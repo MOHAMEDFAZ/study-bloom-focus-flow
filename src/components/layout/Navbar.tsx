@@ -1,6 +1,8 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Logo from '../ui/Logo';
+import ThemeToggle from '../ui/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { Menu, X, User, Book, Clock, Youtube, BarChart2, Info } from 'lucide-react';
 
@@ -28,6 +30,7 @@ const Navbar = () => {
           <Link to="/about" className="text-foreground/80 hover:text-studynest-purple transition-colors">
             About Us
           </Link>
+          <ThemeToggle />
           <Button variant="outline" size="sm" className="ml-2">
             Sign In
           </Button>
@@ -36,7 +39,8 @@ const Navbar = () => {
           </Button>
         </div>
 
-        <div className="md:hidden">
+        <div className="md:hidden flex items-center gap-2">
+          <ThemeToggle />
           <Button 
             variant="ghost" 
             size="icon"

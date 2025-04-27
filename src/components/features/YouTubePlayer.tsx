@@ -89,6 +89,18 @@ const YouTubePlayer = () => {
     localStorage.setItem('savedVideos', JSON.stringify(savedVideos));
   }, [savedVideos]);
 
+  // Real-time search as user types
+  useEffect(() => {
+    if (searchQuery.trim()) {
+      const results = VIDEO_SUGGESTIONS.filter(video =>
+        video.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setSearchResults(results);
+    } else {
+      setSearchResults([]);
+    }
+  }, [searchQuery]);
+
   const handleSearch = () => {
     if (!searchQuery.trim()) {
       toast.error("Please enter a search term");
@@ -97,20 +109,15 @@ const YouTubePlayer = () => {
     
     setIsLoading(true);
     // In a real app, we would call the YouTube API here
-    // For this demo, we'll just return some mock results based on the suggestions
+    // For this demo, we just use the already filtered results from the useEffect
+    
     setTimeout(() => {
-      // Filter suggestions based on search query
-      const results = VIDEO_SUGGESTIONS.filter(video =>
-        video.title.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      
-      setSearchResults(results);
       setIsLoading(false);
       
-      if (results.length === 0) {
+      if (searchResults.length === 0) {
         toast.info("No educational videos found. Try another search term.");
       }
-    }, 1000);
+    }, 500);
   };
 
   const handlePlayVideo = (videoId: string) => {
@@ -215,7 +222,7 @@ const YouTubePlayer = () => {
           <h3 className="text-lg font-semibold mb-4">
             {showSaved 
               ? `Saved Videos (${savedVideos.length})` 
-              : searchResults.length 
+              : searchQuery.trim() 
                 ? `Search Results (${searchResults.length})` 
                 : "Recommended Educational Videos"
             }
@@ -227,8 +234,13 @@ const YouTubePlayer = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {(showSaved ? savedVideos : searchResults.length ? searchResults : VIDEO_SUGGESTIONS).map((video) => (
-                <Card key={video.id} className="overflow-hidden h-full">
+              {(showSaved 
+                ? savedVideos 
+                : searchQuery.trim() 
+                  ? searchResults 
+                  : VIDEO_SUGGESTIONS
+              ).map((video) => (
+                <Card key={video.id} className="overflow-hidden h-full transition-all duration-200 hover:shadow-lg">
                   <div className="relative">
                     <img 
                       src={video.thumbnail} 
