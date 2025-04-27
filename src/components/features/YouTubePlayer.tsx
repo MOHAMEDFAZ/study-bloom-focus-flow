@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Search, ThumbsUp, Bookmark, BookmarkCheck } from 'lucide-react';
 import { toast } from 'sonner';
+import SearchBar from './video/SearchBar';
+import VideoPlayer from './video/VideoPlayer';
+import VideoCard from './video/VideoCard';
+import { Video, SavedVideo } from './video/types';
+import { Button } from '@/components/ui/button';
 
 // Whitelist of educational YouTube channels (by channel ID)
 const WHITELISTED_CHANNELS = [
@@ -19,19 +20,7 @@ const WHITELISTED_CHANNELS = [
   'UCsT0YIqwnpJCM-mx7-gSA4Q', // TEDx Talks
 ];
 
-const YOUTUBE_API_KEY = 'AIzaSyA6Sp0Jo0YI5pTZZ8g5QQOJ_'; // Note: This is a dummy key, you'll need to add your own
-
-interface Video {
-  id: string;
-  title: string;
-  channelId: string;
-  thumbnail: string;
-  channelName: string;
-}
-
-interface SavedVideo extends Video {
-  savedAt: Date;
-}
+const YOUTUBE_API_KEY = 'AIzaSyA6Sp0Jo0YI5pTZZ8g5QQOJ_'; // Note: This is a dummy key
 
 const YouTubePlayer = () => {
   const [currentVideoId, setCurrentVideoId] = useState<string | null>(null);
@@ -94,35 +83,6 @@ const YouTubePlayer = () => {
     }
   };
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (searchQuery) {
-        searchYouTube(searchQuery);
-      }
-    }, 500);
-
-    return () => clearTimeout(timeoutId);
-  }, [searchQuery]);
-
-  const handleSearch = () => {
-    if (!searchQuery.trim()) {
-      toast.error("Please enter a search term");
-      return;
-    }
-    
-    setIsLoading(true);
-    // In a real app, we would call the YouTube API here
-    // For this demo, we just use the already filtered results from the useEffect
-    
-    setTimeout(() => {
-      setIsLoading(false);
-      
-      if (searchResults.length === 0) {
-        toast.info("No educational videos found. Try another search term.");
-      }
-    }, 500);
-  };
-
   const handlePlayVideo = (videoId: string) => {
     setCurrentVideoId(videoId);
   };
@@ -152,24 +112,15 @@ const YouTubePlayer = () => {
     return savedVideos.some(video => video.id === videoId);
   };
 
+  const displayVideos = showSaved ? savedVideos : searchResults;
+
   return (
     <div className="space-y-6">
-      <div className="relative">
-        <Input 
-          placeholder="Search for educational videos..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pr-14 bg-card border-border/50"
-        />
-        <Button 
-          variant="ghost" 
-          size="sm"
-          className="absolute right-1 top-1/2 transform -translate-y-1/2"
-          disabled={isLoading}
-        >
-          <Search size={18} />
-        </Button>
-      </div>
+      <SearchBar 
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        isLoading={isLoading}
+      />
 
       <div className="flex gap-2">
         <Button 
@@ -189,27 +140,7 @@ const YouTubePlayer = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-6">
-        {currentVideoId && (
-          <Card className="shadow-lg">
-            <CardHeader>
-              <CardTitle>Now Playing</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="aspect-video">
-                <iframe 
-                  width="100%" 
-                  height="100%" 
-                  src={`https://www.youtube.com/embed/${currentVideoId}?rel=0`}
-                  title="YouTube video player" 
-                  frameBorder="0" 
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                  allowFullScreen
-                  className="rounded-lg"
-                ></iframe>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        <VideoPlayer videoId={currentVideoId} />
 
         <div>
           <h3 className="text-lg font-semibold mb-4">
@@ -217,8 +148,7 @@ const YouTubePlayer = () => {
               ? `Saved Videos (${savedVideos.length})` 
               : searchQuery.trim() 
                 ? `Search Results (${searchResults.length})` 
-                : "Recommended Educational Videos"
-            }
+                : "Search for Educational Videos"}
           </h3>
 
           {isLoading ? (
@@ -227,54 +157,14 @@ const YouTubePlayer = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {(showSaved 
-                ? savedVideos 
-                : searchQuery.trim() 
-                  ? searchResults 
-                  : VIDEO_SUGGESTIONS
-              ).map((video) => (
-                <Card key={video.id} className="overflow-hidden h-full transition-all duration-200 hover:shadow-lg">
-                  <div className="relative">
-                    <img 
-                      src={video.thumbnail} 
-                      alt={video.title}
-                      className="w-full h-36 object-cover cursor-pointer"
-                      onClick={() => handlePlayVideo(video.id)}
-                    />
-                    <div 
-                      className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 flex items-center justify-center transition-opacity duration-300 cursor-pointer"
-                      onClick={() => handlePlayVideo(video.id)}
-                    >
-                      <ThumbsUp className="text-white mr-2" size={20} />
-                      <span className="text-white font-medium">Play Video</span>
-                    </div>
-                  </div>
-                  <CardContent className="p-4">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h4 
-                          className="font-medium text-base mb-1 line-clamp-2 cursor-pointer hover:text-studynest-purple"
-                          onClick={() => handlePlayVideo(video.id)}
-                        >
-                          {video.title}
-                        </h4>
-                        <p className="text-muted-foreground text-sm">{video.channelName}</p>
-                      </div>
-                      <Button 
-                        variant="ghost" 
-                        size="icon"
-                        onClick={() => handleSaveVideo(video)}
-                        className="text-muted-foreground hover:text-studynest-purple"
-                      >
-                        {isVideoSaved(video.id) ? (
-                          <BookmarkCheck size={18} className="text-studynest-purple" />
-                        ) : (
-                          <Bookmark size={18} />
-                        )}
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+              {displayVideos.map((video) => (
+                <VideoCard
+                  key={video.id}
+                  video={video}
+                  onPlay={handlePlayVideo}
+                  onSave={handleSaveVideo}
+                  isSaved={isVideoSaved(video.id)}
+                />
               ))}
             </div>
           )}
