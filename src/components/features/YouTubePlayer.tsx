@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -16,41 +15,11 @@ const WHITELISTED_CHANNELS = [
   'UClnDI2sdehVm1zm_LmUHsjQ', // Stated Clearly
   'UC-2Y8dQb0S6DtpxNgAKoJKA', // Practical Engineering
   'UCuVLG9pThvBABcYCm7pkNkA', // Deep Look
-  'UCocnRPm84wAXRuJshAFW3aQ', // VSauce (original channel)
+  'UCocnRPm84wAXRuJshAFW3aQ', // VSauce
   'UCsT0YIqwnpJCM-mx7-gSA4Q', // TEDx Talks
 ];
 
-// List of educational video suggestions
-const VIDEO_SUGGESTIONS = [
-  { 
-    id: 'L_Guz73e6fw', 
-    title: 'How to Study Effectively', 
-    channelId: 'UCX6b17PVsYBQ0ip5gyeme-Q',
-    thumbnail: 'https://i.ytimg.com/vi/L_Guz73e6fw/hqdefault.jpg',
-    channelName: 'CrashCourse'
-  },
-  { 
-    id: 'IlU-zDU6aQ0', 
-    title: 'Study Tips - How to learn efficiently', 
-    channelId: 'UC8butISFwT-Wl7EV0hUK0BQ',
-    thumbnail: 'https://i.ytimg.com/vi/IlU-zDU6aQ0/hqdefault.jpg',
-    channelName: 'freeCodeCamp'
-  },
-  { 
-    id: 'p60rN9JEapg', 
-    title: 'How to Learn Anything Fast', 
-    channelId: 'UCBgvgzRsLZKomO3SjU-jOBw',
-    thumbnail: 'https://i.ytimg.com/vi/p60rN9JEapg/hqdefault.jpg',
-    channelName: 'Khan Academy'
-  },
-  { 
-    id: 'Z-zNHHpXoMM', 
-    title: 'The Pomodoro Technique', 
-    channelId: 'UCYO_jab_esuFRV4b17AJtAw',
-    thumbnail: 'https://i.ytimg.com/vi/Z-zNHHpXoMM/hqdefault.jpg',
-    channelName: '3Blue1Brown'
-  },
-];
+const YOUTUBE_API_KEY = 'AIzaSyA6Sp0Jo0YI5pTZZ8g5QQOJ_'; // Note: This is a dummy key, you'll need to add your own
 
 interface Video {
   id: string;
@@ -71,8 +40,7 @@ const YouTubePlayer = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [savedVideos, setSavedVideos] = useState<SavedVideo[]>([]);
   const [showSaved, setShowSaved] = useState(false);
-  
-  // Load saved videos from localStorage
+
   useEffect(() => {
     const saved = localStorage.getItem('savedVideos');
     if (saved) {
@@ -83,22 +51,57 @@ const YouTubePlayer = () => {
       }
     }
   }, []);
-  
-  // Save videos to localStorage when they change
+
   useEffect(() => {
     localStorage.setItem('savedVideos', JSON.stringify(savedVideos));
   }, [savedVideos]);
 
-  // Real-time search as user types
-  useEffect(() => {
-    if (searchQuery.trim()) {
-      const results = VIDEO_SUGGESTIONS.filter(video =>
-        video.title.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setSearchResults(results);
-    } else {
+  const searchYouTube = async (query: string) => {
+    if (!query.trim()) {
       setSearchResults([]);
+      return;
     }
+
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=10&type=video&q=${encodeURIComponent(
+          query + ' educational'
+        )}&key=${YOUTUBE_API_KEY}`
+      );
+
+      if (!response.ok) {
+        throw new Error('YouTube API request failed');
+      }
+
+      const data = await response.json();
+      const videos: Video[] = data.items
+        .filter((item: any) => WHITELISTED_CHANNELS.includes(item.snippet.channelId))
+        .map((item: any) => ({
+          id: item.id.videoId,
+          title: item.snippet.title,
+          channelId: item.snippet.channelId,
+          thumbnail: item.snippet.thumbnails.high.url,
+          channelName: item.snippet.channelTitle,
+        }));
+
+      setSearchResults(videos);
+    } catch (error) {
+      console.error('Error searching YouTube:', error);
+      toast.error('Failed to fetch videos. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (searchQuery) {
+        searchYouTube(searchQuery);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
   }, [searchQuery]);
 
   const handleSearch = () => {
@@ -148,34 +151,26 @@ const YouTubePlayer = () => {
   const isVideoSaved = (videoId: string) => {
     return savedVideos.some(video => video.id === videoId);
   };
-  
+
   return (
     <div className="space-y-6">
-      {/* Search Bar */}
       <div className="relative">
         <Input 
           placeholder="Search for educational videos..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleSearch();
-            }
-          }}
-          className="pr-14"
+          className="pr-14 bg-card border-border/50"
         />
         <Button 
           variant="ghost" 
           size="sm"
           className="absolute right-1 top-1/2 transform -translate-y-1/2"
-          onClick={handleSearch}
           disabled={isLoading}
         >
           <Search size={18} />
         </Button>
       </div>
-      
-      {/* Toggle between search and saved */}
+
       <div className="flex gap-2">
         <Button 
           variant={showSaved ? "outline" : "default"} 
@@ -192,9 +187,8 @@ const YouTubePlayer = () => {
           Saved Videos
         </Button>
       </div>
-      
+
       <div className="grid grid-cols-1 gap-6">
-        {/* YouTube Player */}
         {currentVideoId && (
           <Card className="shadow-lg">
             <CardHeader>
@@ -216,8 +210,7 @@ const YouTubePlayer = () => {
             </CardContent>
           </Card>
         )}
-        
-        {/* Video List */}
+
         <div>
           <h3 className="text-lg font-semibold mb-4">
             {showSaved 
@@ -227,7 +220,7 @@ const YouTubePlayer = () => {
                 : "Recommended Educational Videos"
             }
           </h3>
-          
+
           {isLoading ? (
             <div className="flex items-center justify-center h-32">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-studynest-purple"></div>
