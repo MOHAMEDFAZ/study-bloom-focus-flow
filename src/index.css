@@ -46,6 +46,11 @@
     color-scheme: dark;
   }
 
+  /* Apply dark mode by default using the class approach */
+  html {
+    @apply dark;
+  }
+
   /* Basic styling for all elements */
   * {
     @apply border-border;
@@ -87,11 +92,4 @@
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-studynest-purple/80;
-}
-
-/* Apply dark mode by default using the class approach */
-@layer base {
-  html {
-    @apply dark;
-  }
 }
