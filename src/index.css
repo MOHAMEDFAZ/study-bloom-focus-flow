@@ -38,15 +38,12 @@
     
     --radius: 0.75rem;
   }
-}
 
-/* Set dark mode as default */
-:root {
-  color-scheme: dark;
-}
+  /* Set dark mode as default */
+  :root {
+    color-scheme: dark;
+  }
 
-/* This must be within a layer directive for Tailwind */
-@layer base {
   /* Apply dark class to HTML */
   html {
     @apply dark;
