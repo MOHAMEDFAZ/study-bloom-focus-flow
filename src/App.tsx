@@ -14,15 +14,30 @@ import VideoPlayer from "./pages/VideoPlayer";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+// Create a new QueryClient instance for React Query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false, // Disable refetching on window focus
+      retry: 1, // Only retry failed queries once
+    },
+  },
+});
 
+/**
+ * Main App component
+ * Sets up core providers and routing for the application
+ */
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
       <AuthProvider>
         <TooltipProvider>
+          {/* Toast notifications */}
           <Toaster />
           <Sonner />
+          
+          {/* Routing setup */}
           <BrowserRouter>
             <AnimatePresence mode="wait">
               <Routes>

@@ -218,8 +218,8 @@ const YouTubePlayer = () => {
 
           {/* Error message display */}
           {error && (
-            <div className="flex items-center justify-center p-4 mb-4 bg-destructive/20 rounded-lg text-white">
-              <AlertCircle className="mr-2" size={20} />
+            <div className="flex items-center justify-center p-4 mb-4 bg-destructive/20 rounded-lg text-white" role="alert">
+              <AlertCircle className="mr-2" size={20} aria-hidden="true" />
               <p>{error}</p>
             </div>
           )}
@@ -227,7 +227,8 @@ const YouTubePlayer = () => {
           {/* Loading state */}
           {isLoading ? (
             <div className="flex items-center justify-center h-32">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-studynest-purple"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-studynest-purple" 
+                   aria-label="Loading search results"></div>
             </div>
           ) : (
             /* Video grid display */

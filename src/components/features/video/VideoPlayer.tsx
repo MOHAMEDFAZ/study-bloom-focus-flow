@@ -32,8 +32,10 @@ const VideoPlayer = ({ videoId }: VideoPlayerProps) => {
       <CardContent className="p-4 relative">
         {/* Show loading indicator until video loads */}
         {!isLoaded && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10 rounded-lg">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-studynest-purple"></div>
+          <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-10 rounded-lg" 
+               aria-label="Loading video">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-studynest-purple" 
+                 aria-hidden="true"></div>
           </div>
         )}
         

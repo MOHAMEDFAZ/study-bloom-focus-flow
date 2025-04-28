@@ -34,7 +34,7 @@ const VideoCard = ({ video, onPlay, onSave, isSaved }: VideoCardProps) => {
         {/* Video thumbnail */}
         <img 
           src={video.thumbnail} 
-          alt={video.title}
+          alt={`Thumbnail for ${video.title}`}
           className="w-full h-40 object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105"
           onClick={() => onPlay(video.id)}
           loading="lazy"
@@ -44,8 +44,16 @@ const VideoCard = ({ video, onPlay, onSave, isSaved }: VideoCardProps) => {
         <div 
           className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 cursor-pointer backdrop-blur-sm"
           onClick={() => onPlay(video.id)}
+          role="button"
+          aria-label={`Play ${video.title}`}
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              onPlay(video.id);
+            }
+          }}
         >
-          <ThumbsUp className="text-white mr-2" size={20} />
+          <ThumbsUp className="text-white mr-2" size={20} aria-hidden="true" />
           <span className="text-white font-medium">Play Video</span>
         </div>
       </div>
@@ -57,6 +65,13 @@ const VideoCard = ({ video, onPlay, onSave, isSaved }: VideoCardProps) => {
             <h4 
               className="font-medium text-base mb-1 line-clamp-2 cursor-pointer hover:text-studynest-purple transition-colors"
               onClick={() => onPlay(video.id)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  onPlay(video.id);
+                }
+              }}
             >
               {video.title}
             </h4>
@@ -67,7 +82,7 @@ const VideoCard = ({ video, onPlay, onSave, isSaved }: VideoCardProps) => {
             {/* Saved date (if applicable) */}
             {isSavedVideo && (
               <p className="text-xs text-studynest-purple">
-                Saved {formatDistance(new Date(video.savedAt), new Date(), { addSuffix: true })}
+                Saved {formatDistance(new Date((video as SavedVideo).savedAt), new Date(), { addSuffix: true })}
               </p>
             )}
           </div>
@@ -80,8 +95,9 @@ const VideoCard = ({ video, onPlay, onSave, isSaved }: VideoCardProps) => {
               className="text-muted-foreground hover:text-studynest-purple transition-colors"
               onClick={() => window.open(`https://www.youtube.com/watch?v=${video.id}`, '_blank')}
               title="Open in YouTube"
+              aria-label="Open in YouTube"
             >
-              <ExternalLink size={16} />
+              <ExternalLink size={16} aria-hidden="true" />
             </Button>
             
             {/* Save/unsave button */}
@@ -91,11 +107,12 @@ const VideoCard = ({ video, onPlay, onSave, isSaved }: VideoCardProps) => {
               onClick={() => onSave(video)}
               className="text-muted-foreground hover:text-studynest-purple transition-colors"
               title={isSaved ? "Remove from saved" : "Save video"}
+              aria-label={isSaved ? "Remove from saved videos" : "Save video"}
             >
               {isSaved ? (
-                <BookmarkCheck size={16} className="text-studynest-purple" />
+                <BookmarkCheck size={16} className="text-studynest-purple" aria-hidden="true" />
               ) : (
-                <Bookmark size={16} />
+                <Bookmark size={16} aria-hidden="true" />
               )}
             </Button>
           </div>

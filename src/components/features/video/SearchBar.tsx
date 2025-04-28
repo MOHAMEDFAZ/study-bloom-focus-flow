@@ -37,17 +37,20 @@ const SearchBar = ({ searchQuery, onSearchChange, isLoading }: SearchBarProps) =
           onChange={(e) => setInputValue(e.target.value)}
           className="w-full h-12 pl-4 pr-14 bg-black/40 border-white/10 rounded-l-xl focus:ring-studynest-purple/50 placeholder:text-muted-foreground"
           disabled={isLoading}
+          aria-label="Search videos"
         />
         <Button 
           type="submit"
           variant="default" 
           className="bg-studynest-purple hover:bg-studynest-purple-secondary h-12 rounded-r-xl"
           disabled={isLoading}
+          aria-label={isLoading ? "Searching..." : "Search videos"}
         >
           {isLoading ? (
-            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" 
+                 aria-hidden="true"></div>
           ) : (
-            <Search className="h-5 w-5" />
+            <Search className="h-5 w-5" aria-hidden="true" />
           )}
         </Button>
       </div>
