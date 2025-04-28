@@ -41,6 +41,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   useEffect(() => {
     const root = window.document.documentElement;
     
+    // Apply appropriate class to HTML element
     if (theme === 'dark') {
       root.classList.add('dark');
       root.classList.remove('light');

@@ -89,7 +89,7 @@
   @apply bg-studynest-purple/80;
 }
 
-/* Apply dark mode by default */
-:root {
+/* Apply dark mode by default using the class approach */
+html {
   @apply dark;
 }
