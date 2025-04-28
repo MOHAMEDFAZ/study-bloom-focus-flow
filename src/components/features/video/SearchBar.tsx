@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -10,24 +10,48 @@ interface SearchBarProps {
   isLoading: boolean;
 }
 
+/**
+ * SearchBar component for video search functionality
+ * 
+ * @param {string} searchQuery - Current search query text
+ * @param {function} onSearchChange - Handler function when search input changes
+ * @param {boolean} isLoading - Loading state to indicate search in progress
+ * @returns SearchBar component with input and search button
+ */
 const SearchBar = ({ searchQuery, onSearchChange, isLoading }: SearchBarProps) => {
+  // Local state to manage input before submitting search
+  const [inputValue, setInputValue] = useState(searchQuery);
+
+  // Handle form submission
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSearchChange(inputValue.trim());
+  };
+
   return (
-    <div className="relative w-full max-w-2xl mx-auto mb-6">
-      <Input 
-        placeholder="Search for educational videos..."
-        value={searchQuery}
-        onChange={(e) => onSearchChange(e.target.value)}
-        className="w-full h-12 pl-4 pr-14 bg-black/40 border-white/10 rounded-xl focus:ring-studynest-purple/50 placeholder:text-muted-foreground"
-      />
-      <Button 
-        variant="ghost" 
-        size="icon"
-        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-white transition-colors"
-        disabled={isLoading}
-      >
-        <Search className="h-5 w-5" />
-      </Button>
-    </div>
+    <form onSubmit={handleSubmit} className="relative w-full max-w-2xl mx-auto mb-6">
+      <div className="flex">
+        <Input 
+          placeholder="Search for educational videos..."
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          className="w-full h-12 pl-4 pr-14 bg-black/40 border-white/10 rounded-l-xl focus:ring-studynest-purple/50 placeholder:text-muted-foreground"
+          disabled={isLoading}
+        />
+        <Button 
+          type="submit"
+          variant="default" 
+          className="bg-studynest-purple hover:bg-studynest-purple-secondary h-12 rounded-r-xl"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+          ) : (
+            <Search className="h-5 w-5" />
+          )}
+        </Button>
+      </div>
+    </form>
   );
 };
 

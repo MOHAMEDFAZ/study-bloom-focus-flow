@@ -45,8 +45,9 @@
   color-scheme: dark;
 }
 
-/* Apply dark class to HTML. This must be within a layer directive for Tailwind */
+/* This must be within a layer directive for Tailwind */
 @layer base {
+  /* Apply dark class to HTML */
   html {
     @apply dark;
   }

@@ -16,11 +16,11 @@
 }
 
 .logo:hover {
-  filter: drop-shadow(0 0 2em #9b87f5aa); /* Updated to use studynest purple */
+  filter: drop-shadow(0 0 2em #9b87f5aa); /* Using studynest purple */
 }
 
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #9b87f5aa); /* Updated to use studynest purple */
+  filter: drop-shadow(0 0 2em #9b87f5aa); /* Using studynest purple */
 }
 
 /* Logo spin animation */
