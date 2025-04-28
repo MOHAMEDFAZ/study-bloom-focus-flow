@@ -90,6 +90,8 @@
 }
 
 /* Apply dark mode by default using the class approach */
-html {
-  @apply dark;
+@layer base {
+  html {
+    @apply dark;
+  }
 }
